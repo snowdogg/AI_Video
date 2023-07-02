@@ -1,0 +1,4 @@
+frames/
+temp/
+.DS_Store
+.env
