@@ -17,6 +17,14 @@ import random
 import string
 import requests
 from pathlib import Path
+import asyncio
+from dotenv import dotenv_values, load_dotenv
+import uvicorn
+import socket
+load_dotenv()
+
+STABLE_DIFFUSION_API_KEY=os.getenv("STABLE_DIFFUSION_API_KEY")
+STABLE_DIFFUSION_API_IMG2IMG_ENDPOINT=os.getenv("STABLE_DIFFUSION_API_IMG2IMG_ENDPOINT")
 
 os.makedirs('frames', exist_ok=True)
 os.makedirs('temp', exist_ok=True)
@@ -35,7 +43,21 @@ app.add_middleware(
 )
 
 static_folder = "frames"
-app.mount("/frames", StaticFiles(directory=static_folder, html=True), name="frames")
+app.mount("/frames", StaticFiles(directory="frames"), name="frames")
+
+# Get the host IP
+host_ip = socket.gethostbyname(socket.gethostname())
+
+# Path to the file
+file_path = "/path/to/file.txt"
+
+# Create the string
+result = f"http://{host_ip}/frames/ar1wmmvlyua8d6j53afnpr/frame2.jpg"
+print(result)
+
+@app.get("/")
+async def root():
+    return {"message": "Hello, World!"}
 
 @app.post("/api/frame_response/{id}")
 async def frame_response(request: Request, file: UploadFile = File(...)):
@@ -64,6 +86,20 @@ async def upload_video( id: str = Form(...), email: str = Form(...), file: Uploa
     # Use FFmpeg to extract frames from the video
     subprocess.run(["ffmpeg", "-i", video_name, f"{folder_name}/frame%d.jpg"])
 
+    # # Create a Semaphore with a limit of 5 requests per second
+    # semaphore = asyncio.Semaphore(5)
+
+    # async def limit_requests():
+    #     async with semaphore:
+    #         # Perform your API request here
+    #         # ...
+
+    #         # Simulate some processing time
+    #         await asyncio.sleep(0.1)  # Adjust the sleep duration as per your needs
+
+    # # Call the limit_requests function whenever you want to make a request
+    # asyncio.run(limit_requests())
+
     # Process the frames or perform any other required operations
 
     # Clean up the temporary video file and extracted frames
@@ -85,3 +121,4 @@ async def upload_video( id: str = Form(...), email: str = Form(...), file: Uploa
 
 def random_string(length):
     return ''.join(random.choice(string.ascii_letters) for m in range(length))
+
