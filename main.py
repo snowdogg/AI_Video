@@ -21,6 +21,7 @@ import asyncio
 from dotenv import dotenv_values, load_dotenv
 import uvicorn
 import socket
+import mangum
 load_dotenv()
 
 STABLE_DIFFUSION_API_KEY=os.getenv("STABLE_DIFFUSION_API_KEY")
