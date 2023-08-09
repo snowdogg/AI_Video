@@ -1,5 +1,8 @@
-frames/
 temp/
 .DS_Store
 .env
 Archive.zip
+lambda_artifact.zip
+dep/
+.vscode/
+lambda_artifact/
